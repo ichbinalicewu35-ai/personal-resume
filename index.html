@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alice Wu | 吳思穎 - 專案執行 ＆ AI 工作流轉譯</title>
+    
+    <!-- Google Fonts: Comfortaa (標題), Quicksand (內文), Zen Maru Gothic / Noto Sans TC (圓潤中文字體) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&family=Quicksand:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@400;500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            bg: '#000000',
+                            card: '#0d1117',
+                            cardBorder: '#21262d',
+                            hover: '#161b22'
+                        },
+                        neon: {
+                            yellow: '#FFB703',
+                            yellowLight: '#FFC837',
+                            cyan: '#00F5D4',
+                            cyanLight: '#5DFCE6',
+                            pink: '#FF2A6D',
+                            pinkLight: '#FF5C8D',
+                            blue: '#3A86FF',
+                            blueLight: '#60A5FA'
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Comfortaa', 'Zen Maru Gothic', 'sans-serif'],
+                        body: ['Quicksand', 'Zen Maru Gothic', 'Noto Sans TC', 'sans-serif'],
+                        rounded: ['Zen Maru Gothic', 'Comfortaa', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'neon-yellow': '0 0 20px rgba(255, 183, 3, 0.4)',
+                        'neon-cyan': '0 0 20px rgba(0, 245, 212, 0.4)',
+                        'neon-pink': '0 0 20px rgba(255, 42, 109, 0.4)',
+                        'neon-blue': '0 0 20px rgba(58, 134, 255, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Quicksand', 'Zen Maru Gothic', 'Noto Sans TC', sans-serif;
+            background-color: #000000;
+            color: #f1f5f9;
+        }
+
+        /* 自定義圓潤標籤與發光線條 */
+        .pill-badge {
+            border-radius: 9999px;
+            padding: 0.25rem 0.9rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .speech-bubble {
+            position: relative;
+            background: #ffffff;
+            color: #0f172a;
+            border-radius: 1.25rem;
+            padding: 1rem 1.5rem;
+            font-weight: 700;
+        }
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 24px;
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: #ffffff transparent;
+            display: block;
+            width: 0;
+        }
+
+        /* 霓虹邊框發光 */
+        .glow-card {
+            background-color: #0a0e14;
+            border: 1px solid #1f2937;
+            border-radius: 1.25rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-card:hover {
+            border-color: #00F5D4;
+            box-shadow: 0 0 25px rgba(0, 245, 212, 0.25);
+            transform: translateY(-3px);
+        }
+
+        /* 自定義滾動條 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #21262d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00F5D4;
+        }
+    </style>
+</head>
+<body class="selection:bg-neon-yellow selection:text-black">
+
+    <!-- 頂部導覽列 Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-gray-900">
+        <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Brand Logo Monogram -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-full border-2 border-neon-yellow flex items-center justify-center font-heading font-bold text-neon-yellow group-hover:shadow-neon-yellow transition-all duration-300">
+                    AW
+                </div>
+                <span class="font-heading text-xl font-bold tracking-wider text-white group-hover:text-neon-yellow transition-colors">
+                    ALICE <span class="text-neon-cyan">WU</span>
+                </span>
+            </a>
+
+            <!-- Nav Links -->
+            <div class="hidden md:flex items-center gap-8 font-medium text-gray-300">
+                <a href="#about" class="hover:text-neon-cyan transition-colors">關於核心</a>
+                <a href="#featured-project" class="hover:text-neon-yellow transition-colors">LLM/AI 專案</a>
+                <a href="#projects" class="hover:text-neon-pink transition-colors">精選案例</a>
+                <a href="#skills" class="hover:text-neon-blue transition-colors">職能矩陣</a>
+                <a href="#timeline" class="hover:text-white transition-colors">歷程時間軸</a>
+                <a href="#contact" class="pill-badge bg-neon-yellow text-black hover:bg-neon-yellowLight transition-transform hover:scale-105">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> 聯絡我
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 01. Hero Section 封面首屏 -->
+    <section class="min-h-screen flex items-center pt-24 pb-16 px-6 relative overflow-hidden">
+        <!-- 背景裝飾微光線條 -->
+        <div class="absolute top-1/4 right-10 w-96 h-96 bg-neon-cyan/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-10 left-10 w-80 h-80 bg-neon-pink/10 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div class="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <!-- 左側主要標語 -->
+            <div class="lg:col-span-8 space-y-6">
+                
+                <div class="flex flex-wrap gap-2 items-center">
+                    <span class="pill-badge bg-black border border-neon-pink text-neon-pink text-xs tracking-wider">
+                        <i class="fa-solid fa-circle text-[8px] mr-1.5 animate-pulse"></i> 專案執行 ＆ 需求轉譯
+                    </span>
+                    <span class="pill-badge bg-black border border-neon-cyan text-neon-cyan text-xs tracking-wider">
+                        #AI_Workflow
+                    </span>
+                    <span class="pill-badge bg-black border border-neon-yellow text-neon-yellow text-xs tracking-wider">
+                        #SOP_Standardization
+                    </span>
+                </div>
+
+                <div class="space-y-2">
+                    <h1 class="font-heading text-5xl sm:text-7xl font-bold text-neon-yellow tracking-tight leading-tight">
+                        ALICE WU
+                    </h1>
+                    <h2 class="font-heading text-3xl sm:text-4xl font-bold text-white leading-snug">
+                        將生澀法規與複雜流程，<br>
+                        化繁為簡的 <span class="text-neon-cyan underline decoration-neon-cyan/40 decoration-4">專案執行夥伴</span>。
+                    </h2>
+                </div>
+
+                <p class="text-gray-400 text-lg leading-relaxed max-w-2xl">
+                    具備 6 年顧問業與專案管理實務經驗。擅長在「政府機關、技術研發與使用者」之間搭起溝通橋樑，並主動導入 LLM / Dify 智動化工具，把混亂業務淬煉成可複製的高效 SOP。
+                </p>
+
+                <!-- CTA 按鈕群 -->
+                <div class="flex flex-wrap gap-4 pt-4">
+                    <a href="#featured-project" class="pill-badge bg-neon-cyan text-black px-6 py-3 font-bold hover:shadow-neon-cyan hover:scale-105 transition-all">
+                        <i class="fa-solid fa-bolt mr-2"></i> 查看 Dify AI 落地專案
+                    </a>
+                    <a href="#contact" class="pill-badge bg-transparent border-2 border-white/60 text-white px-6 py-3 font-bold hover:border-neon-yellow hover:text-neon-yellow transition-all">
+                        <i class="fa-regular fa-envelope mr-2"></i> 邀約面談
+                    </a>
+                </div>
+
+                <!-- 數據亮點欄 -->
+                <div class="grid grid-cols-3 gap-4 pt-8 border-t border-gray-900 max-w-xl">
+                    <div>
+                        <div class="font-heading text-3xl font-bold text-neon-yellow">6+ 年</div>
+                        <div class="text-xs text-gray-500 mt-1">跨領域專案統籌經驗</div>
+                    </div>
+                    <div>
+                        <div class="font-heading text-3xl font-bold text-neon-cyan">90%</div>
+                        <div class="text-xs text-gray-500 mt-1">AI 客服問答精確率提升</div>
+                    </div>
+                    <div>
+                        <div class="font-heading text-3xl font-bold text-neon-pink">1,000+</div>
+                        <div class="text-xs text-gray-500 mt-1">全台實體巡迴人次規模</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 右側：簡報風格的思維對話泡泡與視覺圖卡 -->
+            <div class="lg:col-span-4 space-y-4">
+                <div class="speech-bubble shadow-xl">
+                    <p class="text-base text-gray-900">
+                        「LLM 是記憶力很好的新人。<br>
+                        理解他的思考模式，思考怎麼訓練吸收效果最好，就能讓他快速成為你的好幫手！」
+                    </p>
+                </div>
+                
+                <div class="p-6 glow-card border-neon-blue/30 space-y-3">
+                    <div class="text-xs font-bold text-neon-blue uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-compass"></i> Alice's Philosophy
+                    </div>
+                    <div class="text-sm text-gray-300 leading-relaxed font-medium">
+                        「能選擇的職類有限，不同產業的職稱也不能一概而論，但我希望能持續從事將複雜資訊簡化後、順利與人溝通的工作。」
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 02. About Me 核心三支柱 -->
+    <section id="about" class="py-20 px-6 border-t border-gray-900 bg-[#050505]">
+        <div class="max-w-6xl mx-auto space-y-12">
+            
+            <div class="text-center space-y-3">
+                <span class="pill-badge bg-neon-pink/10 border border-neon-pink text-neon-pink text-xs uppercase">
+                    Core Strengths
+                </span>
+                <h3 class="font-heading text-3xl sm:text-4xl font-bold text-white">
+                    核心優勢：轉譯、秩序與敏捷自學
+                </h3>
+                <p class="text-gray-400 text-sm max-w-xl mx-auto">
+                    不只執行任務，更能回頭檢視流程邏輯，找出可精簡與自動化的環節。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- 卡片 1 -->
+                <div class="glow-card p-8 space-y-4 border-l-4 border-l-neon-pink">
+                    <div class="w-12 h-12 rounded-2xl bg-neon-pink/10 border border-neon-pink/30 flex items-center justify-center text-neon-pink text-xl font-bold">
+                        01
+                    </div>
+                    <h4 class="font-heading text-xl font-bold text-white">
+                        資訊轉譯與視覺化
+                    </h4>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        輔大中文 ＋ 德語雙學士底蘊，具備敏銳文字感。研讀生硬環保法規與工程術語後，能以 5W1H 架構與生活化比喻轉換為圖卡與 SOP。
+                    </p>
+                    <div class="text-xs text-neon-pink font-semibold">
+                        #跨領域溝通橋樑 #簡報視覺化
+                    </div>
+                </div>
+
+                <!-- 卡片 2 -->
+                <div class="glow-card p-8 space-y-4 border-l-4 border-l-neon-cyan">
+                    <div class="w-12 h-12 rounded-2xl bg-neon-cyan/10 border border-neon-cyan/30 flex items-center justify-center text-neon-cyan text-xl font-bold">
+                        02
+                    </div>
+                    <h4 class="font-heading text-xl font-bold text-white">
+                        混亂中建立秩序
+                    </h4>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        能在缺乏前例的環境下，主動透過提問與條列清單，把行政庶務與跨工種協作轉化為標準作業流程，大幅降低團隊出錯率。
+                    </p>
+                    <div class="text-xs text-neon-cyan font-semibold">
+                        #SOP制定 #版本管理與排程
+                    </div>
+                </div>
+
+                <!-- 卡片 3 -->
+                <div class="glow-card p-8 space-y-4 border-l-4 border-l-neon-yellow">
+                    <div class="w-12 h-12 rounded-2xl bg-neon-yellow/10 border border-neon-yellow/30 flex items-center justify-center text-neon-yellow text-xl font-bold">
+                        03
+                    </div>
+                    <h4 class="font-heading text-xl font-bold text-white">
+                        敏捷自學與 AI 實踐
+                    </h4>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        無資工背景自主摸索 Dify 平台與 LLM 工作流，透過實驗紀錄與混淆矩陣驗證，完成企業法規知識庫建置與產品上線 Demo。
+                    </p>
+                    <div class="text-xs text-neon-yellow font-semibold">
+                        #Dify #PromptEngineering #RAG
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 03. Featured Showcase Project 深度案例：AI 客服與知識庫 -->
+    <section id="featured-project" class="py-24 px-6 relative">
+        <div class="max-w-6xl mx-auto space-y-12">
+            
+            <!-- Section Header -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-800 pb-6">
+                <div>
+                    <div class="flex items-center gap-2 text-neon-yellow font-bold text-sm uppercase tracking-wider mb-2">
+                        <i class="fa-solid fa-star"></i> Featured Case Study
+                    </div>
+                    <h3 class="font-heading text-3xl sm:text-5xl font-bold text-white">
+                        從 LINE@ 到 AI 客服產品落地
+                    </h3>
+                    <p class="text-gray-400 text-sm sm:text-base mt-2">
+                        專案：環保法規諮詢知識庫 ＆ Dify LLM 工作流建置與品質優化實踐
+                    </p>
+                </div>
+                <div class="flex gap-2">
+                    <span class="pill-badge bg-black border border-neon-yellow text-neon-yellow text-xs">營業量計畫</span>
+                    <span class="pill-badge bg-black border border-neon-cyan text-neon-cyan text-xs">Dify 應用</span>
+                </div>
+            </div>
+
+            <!-- 簡報風格四階段垂直導軌 (概念 -> 工具 -> 測試 -> 成果) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- 階段 1: 概念比喻 -->
+                <div class="lg:col-span-6 glow-card p-6 sm:p-8 space-y-6">
+                    <div class="flex items-center gap-3">
+                        <span class="pill-badge bg-neon-pink text-white font-bold text-sm">概 念</span>
+                        <h4 class="font-heading text-xl font-bold text-white">用生活化料理，搞懂 LLM 運作</h4>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-3 text-center pt-2">
+                        <div class="bg-black/60 p-4 rounded-xl border border-gray-800">
+                            <div class="text-2xl mb-1">🥗</div>
+                            <div class="font-bold text-neon-pink text-sm">備料</div>
+                            <div class="text-[11px] text-gray-400 mt-1">Embedding<br>文本嵌入向量資料庫</div>
+                        </div>
+                        <div class="bg-black/60 p-4 rounded-xl border border-gray-800">
+                            <div class="text-2xl mb-1">🧊</div>
+                            <div class="font-bold text-neon-cyan text-sm">揀選用料</div>
+                            <div class="text-[11px] text-gray-400 mt-1">RAG 檢索<br>開冰箱找到精確資訊</div>
+                        </div>
+                        <div class="bg-black/60 p-4 rounded-xl border border-gray-800">
+                            <div class="text-2xl mb-1">🍳</div>
+                            <div class="font-bold text-neon-yellow text-sm">烹調料理</div>
+                            <div class="text-[11px] text-gray-400 mt-1">LLM 生成<br>消化資訊轉成自然回覆</div>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        ★ <strong>轉譯亮點</strong>：將枯燥難懂的向量檢索概念，以「備料切塊進冰箱 ➔ 挑選食材 ➔ 下鍋烹煮」的直覺比喻向團隊與甲方匯報，大幅降低溝通門檻。
+                    </p>
+                </div>
+
+                <!-- 階段 2: 測試與實驗方法 -->
+                <div class="lg:col-span-6 glow-card p-6 sm:p-8 space-y-6">
+                    <div class="flex items-center gap-3">
+                        <span class="pill-badge bg-neon-cyan text-black font-bold text-sm">測 試</span>
+                        <h4 class="font-heading text-xl font-bold text-white">3×3 組合實驗 ＆ 混淆矩陣驗證</h4>
+                    </div>
+
+                    <div class="bg-black/60 p-4 rounded-xl border border-gray-800 space-y-3">
+                        <div class="flex justify-between items-center text-xs font-bold text-gray-300">
+                            <span>資料庫組合測試</span>
+                            <span class="text-neon-cyan">精確率 Precision</span>
+                        </div>
+                        
+                        <!-- 測試進度條 1 -->
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-gray-400">常見問答 Q + 常見問答 A</span>
+                                <span class="text-gray-300 font-bold">70%</span>
+                            </div>
+                            <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                                <div class="bg-gray-500 h-full" style="width: 70%"></div>
+                            </div>
+                        </div>
+
+                        <!-- 測試進度條 2 -->
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-gray-400">電話紀錄 Q + 電話紀錄 A</span>
+                                <span class="text-gray-300 font-bold">50%</span>
+                            </div>
+                            <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                                <div class="bg-neon-pink h-full" style="width: 50%"></div>
+                            </div>
+                        </div>
+
+                        <!-- 測試進度條 3 (最佳) -->
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-neon-yellow font-bold">★ 電話紀錄 Q + 常見問答 A (最佳組合)</span>
+                                <span class="text-neon-yellow font-bold">90% (最佳)</span>
+                            </div>
+                            <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                                <div class="bg-neon-yellow shadow-neon-yellow h-full" style="width: 90%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        ★ <strong>工程思維</strong>：列出所有變因（檔案格式、Embedding 閥值、TOP K、Prompt日誌），嚴格計算 <code class="text-neon-cyan">TP / (TP + FP)</code> 精確率，找出最佳資料結構。
+                    </p>
+                </div>
+
+                <!-- 階段 3 & 4: 成果與 SOP 流程圖 -->
+                <div class="lg:col-span-12 glow-card p-6 sm:p-8 space-y-6 border-neon-yellow/40">
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <span class="pill-badge bg-neon-yellow text-black font-bold text-sm">成 果</span>
+                            <h4 class="font-heading text-2xl font-bold text-white">
+                                產出「提高 Q&A 資料庫準確率 SOP 流程圖」
+                            </h4>
+                        </div>
+                        <span class="pill-badge bg-black border border-gray-700 text-gray-300 text-xs">
+                            <i class="fa-solid fa-check mr-1 text-neon-cyan"></i> 成功向甲方 Demo 上線
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
+                        <div class="bg-black/50 p-4 rounded-xl border border-gray-800 space-y-1">
+                            <div class="text-xs text-neon-cyan font-bold">STEP 1</div>
+                            <div class="font-bold text-white text-sm">選定題型與篩選</div>
+                            <div class="text-xs text-gray-400">排除個案隱私資訊，保留通則性諮詢記錄。</div>
+                        </div>
+                        <div class="bg-black/50 p-4 rounded-xl border border-gray-800 space-y-1">
+                            <div class="text-xs text-neon-cyan font-bold">STEP 2</div>
+                            <div class="font-bold text-white text-sm">擴充提問多樣性</div>
+                            <div class="text-xs text-gray-400">蒐集不同問法，並利用 ChatGPT 擴充提問詞。</div>
+                        </div>
+                        <div class="bg-black/50 p-4 rounded-xl border border-gray-800 space-y-1">
+                            <div class="text-xs text-neon-cyan font-bold">STEP 3</div>
+                            <div class="font-bold text-white text-sm">標準答案對應與潤飾</div>
+                            <div class="text-xs text-gray-400">確保每個提問均能精準對應官方標準答覆。</div>
+                        </div>
+                        <div class="bg-black/50 p-4 rounded-xl border border-gray-800 space-y-1">
+                            <div class="text-xs text-neon-yellow font-bold">STEP 4</div>
+                            <div class="font-bold text-white text-sm">上線營運分流</div>
+                            <div class="text-xs text-gray-400">「線上初篩、電話深談」，有效減輕真人客服負擔。</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 04. Other Key Projects 其他精選案例 -->
+    <section id="projects" class="py-20 px-6 border-t border-gray-900 bg-[#050505]">
+        <div class="max-w-6xl mx-auto space-y-12">
+            
+            <div class="text-center space-y-3">
+                <span class="pill-badge bg-neon-blue/10 border border-neon-blue text-neon-blue text-xs uppercase">
+                    Portfolio
+                </span>
+                <h3 class="font-heading text-3xl sm:text-4xl font-bold text-white">
+                    更多專案統籌與實績案例
+                </h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- 專案 A: 千人級實體巡迴與百人視訊直播 -->
+                <div class="glow-card p-8 space-y-5">
+                    <div class="flex justify-between items-start">
+                        <span class="pill-badge bg-black border border-neon-cyan text-neon-cyan text-xs">實體與線上活動</span>
+                        <span class="text-xs text-gray-500">2020 - 2026</span>
+                    </div>
+                    <h4 class="font-heading text-2xl font-bold text-white">
+                        全台巡迴宣導說明會 ＆ 350人線上會議串流
+                    </h4>
+                    <ul class="text-sm text-gray-300 space-y-2.5">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-neon-cyan mt-1 text-xs"></i>
+                            <span><strong>線下實體控管</strong>：每年籌辦 10-15 場全台巡迴（累積逾 1,000 人次），掌控預算、場地、動線與教材印量。</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-neon-cyan mt-1 text-xs"></i>
+                            <span><strong>百人線上串流</strong>：主導 Google Meet 與 YouTube 同步直播（單場 350 人），制定幕後分工機制與連線測試 SOP。</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-neon-cyan mt-1 text-xs"></i>
+                            <span><strong>互動機制優化</strong>：導入 Kahoot! 與即時問卷分析量化成效，編製「SOP 手卡」縮短團隊交接期。</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 專案 B: 法規轉譯與教材文宣視覺化 -->
+                <div class="glow-card p-8 space-y-5">
+                    <div class="flex justify-between items-start">
+                        <span class="pill-badge bg-black border border-neon-pink text-neon-pink text-xs">資訊視覺化</span>
+                        <span class="text-xs text-gray-500">環保政策宣導</span>
+                    </div>
+                    <h4 class="font-heading text-2xl font-bold text-white">
+                        生澀法規轉譯 ＆ 5W1H 視覺化教材編撰
+                    </h4>
+                    <ul class="text-sm text-gray-300 space-y-2.5">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-neon-pink mt-1 text-xs"></i>
+                            <span><strong>法規新舊差異分析</strong>：研讀法規原文，在有限議程內精確取捨年度宣導重點。</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-neon-pink mt-1 text-xs"></i>
+                            <span><strong>結構化簡報排版</strong>：將長篇條文圖表化，降低閱聽者認知負擔，口頭向主管機關報告。</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-neon-pink mt-1 text-xs"></i>
+                            <span><strong>社群圖卡文宣</strong>：以 5W1H 原則製作高易讀性懶人包，提升外部業者受眾的遵法率。</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 05. Skills & Timeline 職能與歷程 -->
+    <section id="skills" class="py-20 px-6">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
+            
+            <!-- 技能儀表盤 -->
+            <div class="lg:col-span-6 space-y-8">
+                <div class="space-y-2">
+                    <span class="pill-badge bg-neon-blue/10 border border-neon-blue text-neon-blue text-xs uppercase">Skills & Toolkit</span>
+                    <h3 class="font-heading text-3xl font-bold text-white">專業技能與工具</h3>
+                </div>
+
+                <!-- 技能分類卡片 -->
+                <div class="space-y-4">
+                    <div class="p-5 glow-card border-gray-800 space-y-2">
+                        <div class="text-sm font-bold text-neon-yellow flex items-center gap-2">
+                            <i class="fa-solid fa-diagram-project"></i> 專案管理與溝通轉譯
+                        </div>
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <span class="pill-badge bg-black text-gray-300 border border-gray-700 text-xs">專案規劃與排程</span>
+                            <span class="pill-badge bg-black text-gray-300 border border-gray-700 text-xs">SOP 流程制定</span>
+                            <span class="pill-badge bg-black text-gray-300 border border-gray-700 text-xs">跨部門需求對接</span>
+                            <span class="pill-badge bg-black text-gray-300 border border-gray-700 text-xs">簡報演說與主持</span>
+                        </div>
+                    </div>
+
+                    <div class="p-5 glow-card border-gray-800 space-y-2">
+                        <div class="text-sm font-bold text-neon-cyan flex items-center gap-2">
+                            <i class="fa-solid fa-robot"></i> AI 與數位應用工具
+                        </div>
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <span class="pill-badge bg-black text-neon-cyan border border-neon-cyan/40 text-xs font-bold">Dify (LLM Workflow)</span>
+                            <span class="pill-badge bg-black text-gray-300 border border-gray-700 text-xs">Prompt Engineering</span>
+                            <span class="pill-badge bg-black text-gray-300 border border-gray-700 text-xs">LINE@ 官方帳號營運</span>
+                            <span class="pill-badge bg-black text-gray-300 border border-gray-700 text-xs">Kahoot! 數據問卷</span>
+                            <span class="pill-badge bg-black text-gray-300 border border-gray-700 text-xs">Google Meet / YouTube 串流</span>
+                        </div>
+                    </div>
+
+                    <div class="p-5 glow-card border-gray-800 space-y-2">
+                        <div class="text-sm font-bold text-neon-pink flex items-center gap-2">
+                            <i class="fa-solid fa-language"></i> 語言能力與專業證照
+                        </div>
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <span class="pill-badge bg-black text-gray-300 border border-gray-700 text-xs">TOEIC 860 分</span>
+                            <span class="pill-badge bg-black text-gray-300 border border-gray-700 text-xs">德語 FLPT 筆試 B2 / 口試 B1</span>
+                            <span class="pill-badge bg-black text-gray-300 border border-gray-700 text-xs">全方位基礎人力資源管理師認證</span>
+                            <span class="pill-badge bg-black text-gray-300 border border-gray-700 text-xs">雙語工作環境對接</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 時間軸 Timeline -->
+            <div id="timeline" class="lg:col-span-6 space-y-8">
+                <div class="space-y-2">
+                    <span class="pill-badge bg-neon-yellow/10 border border-neon-yellow text-neon-yellow text-xs uppercase">Career Path</span>
+                    <h3 class="font-heading text-3xl font-bold text-white">經歷與學歷軌跡</h3>
+                </div>
+
+                <!-- 垂直發光時間軸 -->
+                <div class="relative pl-6 border-l-2 border-gray-800 space-y-8">
+                    
+                    <!-- 節點 1 -->
+                    <div class="relative group">
+                        <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-neon-yellow border-4 border-black group-hover:scale-125 transition-transform"></div>
+                        <div class="text-xs font-bold text-neon-yellow">2026/05 ~ 2026/07</div>
+                        <div class="text-base font-bold text-white mt-1">IMO Architecture + Design 埃恩歐設計</div>
+                        <div class="text-xs text-gray-400">行政秘書 ｜ 西班牙籍主管雙語溝通、官網內容維護、財務人事行政</div>
+                    </div>
+
+                    <!-- 節點 2 -->
+                    <div class="relative group">
+                        <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-neon-cyan border-4 border-black group-hover:scale-125 transition-transform"></div>
+                        <div class="text-xs font-bold text-neon-cyan">2020/08 ~ 2026/03（5年8個月）</div>
+                        <div class="text-base font-bold text-white mt-1">環資國際有限公司</div>
+                        <div class="text-xs text-gray-400">環境工程師 / 專案執行 ｜ AI 客服落地、全台巡迴宣導、法規教材視覺化</div>
+                    </div>
+
+                    <!-- 節點 3 -->
+                    <div class="relative group">
+                        <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-neon-pink border-4 border-black group-hover:scale-125 transition-transform"></div>
+                        <div class="text-xs font-bold text-neon-pink">2019/07 ~ 2020/02</div>
+                        <div class="text-base font-bold text-white mt-1">德利威電子股份有限公司</div>
+                        <div class="text-xs text-gray-400">行政櫃台 / 文管 ｜ ECR/ECN 文件管理體系、承認書建檔、行政庶務</div>
+                    </div>
+
+                    <!-- 節點 4 (學歷) -->
+                    <div class="relative group">
+                        <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-neon-blue border-4 border-black group-hover:scale-125 transition-transform"></div>
+                        <div class="text-xs font-bold text-neon-blue">2014/09 ~ 2019/06</div>
+                        <div class="text-base font-bold text-white mt-1">私立輔仁大學</div>
+                        <div class="text-xs text-gray-400">中國文學系 ＆ 德語語文學系（雙學士畢業）</div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 06. Contact & Footer 聯絡與邀約 -->
+    <section id="contact" class="py-24 px-6 border-t border-gray-900 bg-black text-center relative overflow-hidden">
+        <div class="max-w-3xl mx-auto space-y-8 relative z-10">
+            
+            <div class="speech-bubble max-w-lg mx-auto shadow-2xl">
+                <p class="text-lg text-gray-900">
+                    「如果看過經歷，對我這個人產生興趣，就算貴公司當下沒有職缺，也歡迎約我當面聊聊！」
+                </p>
+            </div>
+
+            <div class="space-y-3 pt-4">
+                <h3 class="font-heading text-4xl sm:text-5xl font-bold text-white">
+                    Let's Connect & Collaborate.
+                </h3>
+                <p class="text-gray-400 text-sm">
+                    尋找專案執行人員 / 教育訓練 / 流程轉譯夥伴？歡迎隨時與我聯繫！
+                </p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4 pt-4">
+                <a href="mailto:ichbinalicewu35@gmail.com" class="pill-badge bg-neon-yellow text-black px-8 py-3.5 font-bold hover:shadow-neon-yellow hover:scale-105 transition-all text-sm">
+                    <i class="fa-solid fa-envelope mr-2"></i> ichbinalicewu35@gmail.com
+                </a>
+                <a href="tel:0958321139" class="pill-badge bg-black border-2 border-neon-cyan text-neon-cyan px-8 py-3.5 font-bold hover:bg-neon-cyan hover:text-black hover:shadow-neon-cyan transition-all text-sm">
+                    <i class="fa-solid fa-phone mr-2"></i> 0958-321-139
+                </a>
+            </div>
+
+            <div class="text-xs text-gray-600 pt-12">
+                © 2026 Alice Wu (吳思穎). Crafted with Cyber-Neon Minimalist Design.
+            </div>
+
+        </div>
+    </section>
+
+</body>
+</html>
